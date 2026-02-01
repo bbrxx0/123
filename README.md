@@ -33,3 +33,16 @@ python manage.py run
 Open:
 - Website: http://127.0.0.1:5000
 - Admin: http://127.0.0.1:5000/admin
+
+## Documentation
+
+### 📊 Use Case Diagram
+Complete use case diagram documentation is available in the `docs/` folder:
+- **[View Instructions](docs/USE-CASE-INSTRUCTIONS.md)** - Step-by-step guide in Polish/Russian for creating the diagram in Visual Paradigm
+- **[View Description](docs/USE-CASE-DESCRIPTION.md)** - Detailed description of all use cases (EN/PL/RU)
+- **[View Diagram](docs/StayFinder%20Use%20Case%20Diagram.png)** - Generated diagram image
+- **[View Source](docs/use-case-diagram.puml)** - PlantUML source code
+
+**Quick Start:**
+- For beginners: Read the step-by-step instructions in `docs/USE-CASE-INSTRUCTIONS.md`
+- For advanced users: Import `docs/use-case-diagram.puml` directly into Visual Paradigm
