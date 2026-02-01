@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Booking — StayFinder{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-7 col-xl-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="mb-3">
+          <div class="text-secondary small">{{ room.hotel.city }} • {{ room.hotel.name }}</div>
+          <h1 class="h4 mb-1">Book: {{ room.name }}</h1>
+          <div class="text-secondary">Capacity: {{ room.capacity }} • Price: <b>{{ room.price_per_night }}</b> / night</div>
+        </div>
+
+        <form method="post" class="needs-validation" novalidate>
+          {{ form.csrf_token }}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">{{ form.check_in.label.text }}</label>
+              {{ form.check_in(class="form-control", type="date") }}
+              {% for e in form.check_in.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ form.check_out.label.text }}</label>
+              {{ form.check_out(class="form-control", type="date") }}
+              {% for e in form.check_out.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-12 d-grid mt-2">
+              <button class="btn btn-dark btn-lg">{{ form.submit.label.text }}</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="mt-3 text-secondary small">
+          New bookings are created with status: <span class="badge text-bg-secondary">pending</span>. Admin can confirm them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

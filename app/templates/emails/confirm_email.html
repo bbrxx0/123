@@ -1,0 +1,16 @@
+{% extends "emails/_base.html" %}
+{% block body %}
+<h2 style="margin:0 0 10px;">Confirm your email</h2>
+<p style="margin:0 0 14px; color:#374151;">
+  Thanks for registering. Please confirm your email to activate your account.
+</p>
+<p style="margin:0 0 18px;">
+  <a href="{{ confirm_url }}" style="display:inline-block; background:#2563eb; color:#fff; text-decoration:none; padding:10px 14px; border-radius:10px;">
+    Confirm email
+  </a>
+</p>
+<p style="margin:0; color:#6b7280; font-size:12px;">
+  If the button doesn't work, copy this link:<br>
+  <span style="word-break:break-all;">{{ confirm_url }}</span>
+</p>
+{% endblock %}

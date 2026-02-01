@@ -1,0 +1,20 @@
+{% extends "emails/_base.html" %}
+{% block body %}
+<h2 style="margin:0 0 10px;">Payment receipt</h2>
+<p style="margin:0 0 14px; color:#374151;">
+  Your payment was successful. Here are your booking details:
+</p>
+
+<div style="border:1px solid #eef0f6; border-radius:12px; padding:14px; background:#fafbff;">
+  <div><b>Booking:</b> #{{ r.id }}</div>
+  <div><b>Hotel:</b> {{ r.room.hotel.name }} ({{ r.room.hotel.city }})</div>
+  <div><b>Room:</b> {{ r.room.name }}</div>
+  <div><b>Dates:</b> {{ r.check_in }} → {{ r.check_out }} ({{ r.nights }} nights)</div>
+  <div><b>Total:</b> {{ r.total_price() }}</div>
+  <div><b>Receipt ref:</b> {{ receipt_ref }}</div>
+</div>
+
+<p style="margin:16px 0 0; color:#6b7280; font-size:12px;">
+  Keep this email as your receipt.
+</p>
+{% endblock %}

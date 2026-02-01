@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Check your email — StayFinder{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-7 col-xl-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <div class="rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width:44px;height:44px;">
+            <i class="bi bi-envelope-check fs-4"></i>
+          </div>
+          <div>
+            <h1 class="h4 mb-0">Confirm your email</h1>
+            <div class="text-secondary small">We sent a confirmation link to <b>{{ email }}</b>.</div>
+          </div>
+        </div>
+
+        <hr class="my-3">
+
+        <p class="text-secondary mb-0">
+          Open your inbox and click the confirmation button. After that, you can sign in.
+        </p>
+
+        {% if confirm_url %}
+          <div class="alert alert-warning border mt-3 mb-0">
+            <div class="fw-semibold mb-1">Debug mode</div>
+            <div class="small">Confirmation link:</div>
+            <a class="small" href="{{ confirm_url }}">{{ confirm_url }}</a>
+          </div>
+        {% endif %}
+
+        <div class="mt-4 d-flex gap-2">
+          <a class="btn btn-primary" href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Sign in</a>
+          <a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Back to hotels</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

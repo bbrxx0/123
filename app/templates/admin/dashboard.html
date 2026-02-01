@@ -1,0 +1,199 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Dashboard — Admin{% endblock %}
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">Dashboard</h1>
+    <div class="text-secondary small">Overview and operational stats</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.reservations_list') }}"><i class="bi bi-receipt me-1"></i>Bookings</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.payments_list') }}"><i class="bi bi-credit-card me-1"></i>Payments</a>
+    <a class="btn btn-sm btn-primary" href="{{ url_for('admin.hotel_new') }}"><i class="bi bi-plus-lg me-1"></i>New hotel</a>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm kpi">
+      <div class="card-body">
+        <div class="text-secondary small">Hotels</div>
+        <div class="fs-3 fw-bold">{{ stats.hotels }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm kpi">
+      <div class="card-body">
+        <div class="text-secondary small">Rooms</div>
+        <div class="fs-3 fw-bold">{{ stats.rooms }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm kpi">
+      <div class="card-body">
+        <div class="text-secondary small">Users</div>
+        <div class="fs-3 fw-bold">{{ stats.users }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card border-0 shadow-sm kpi kpi-accent">
+      <div class="card-body">
+        <div class="text-secondary small">Paid revenue</div>
+        <div class="fs-3 fw-bold">{{ stats.revenue_paid }}</div>
+        <div class="text-secondary small">
+          <span class="badge text-bg-success">paid {{ stats.paid }}</span>
+          <span class="badge text-bg-secondary">unpaid {{ stats.unpaid }}</span>
+          <span class="badge text-bg-danger">failed {{ stats.failed }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-xl-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h5 mb-0">Latest bookings</h2>
+          <div class="small text-secondary">
+            <span class="badge text-bg-secondary">pending {{ stats.pending }}</span>
+            <span class="badge text-bg-success">confirmed {{ stats.confirmed }}</span>
+            <span class="badge text-bg-light border text-dark">canceled {{ stats.canceled }}</span>
+          </div>
+        </div>
+
+        {% if latest %}
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Hotel / Room</th>
+                  <th>Dates</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in latest %}
+                  <tr>
+                    <td class="text-secondary">#{{ r.id }}</td>
+                    <td>{{ r.user.email }}</td>
+                    <td>
+                      <div class="fw-semibold">{{ r.room.hotel.name }}</div>
+                      <div class="text-secondary small">{{ r.room.name }}</div>
+                    </td>
+                    <td class="text-secondary">{{ r.check_in }} → {{ r.check_out }}</td>
+                    <td>
+                      <span class="badge 
+                        {% if r.status=='confirmed' %}text-bg-success
+                        {% elif r.status=='canceled' %}text-bg-light border text-dark
+                        {% else %}text-bg-secondary{% endif %}">
+                        {{ r.status }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge 
+                        {% if r.payment_status=='paid' %}text-bg-success
+                        {% elif r.payment_status=='failed' %}text-bg-danger
+                        {% else %}text-bg-secondary{% endif %}">
+                        {{ r.payment_status }}
+                      </span>
+                    </td>
+                    <td class="text-end">
+                      <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.reservation_detail', res_id=r.id) }}"><i class="bi bi-eye me-1"></i>View</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-secondary">No bookings yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-5">
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Upcoming check-ins (7 days)</h2>
+        {% if upcoming %}
+          <div class="vstack gap-2">
+            {% for r in upcoming %}
+              <a class="text-decoration-none" href="{{ url_for('admin.reservation_detail', res_id=r.id) }}">
+                <div class="p-3 rounded-4 border bg-white hover-soft">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold text-dark">{{ r.room.hotel.name }}</div>
+                      <div class="text-secondary small">{{ r.user.email }} • {{ r.room.name }}</div>
+                    </div>
+                    <span class="badge text-bg-light border text-dark">{{ r.check_in }}</span>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-secondary">No upcoming check-ins.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Latest payments</h2>
+        {% if latest_payments %}
+          <div class="vstack gap-2">
+            {% for r in latest_payments %}
+              <a class="text-decoration-none" href="{{ url_for('admin.reservation_detail', res_id=r.id) }}">
+                <div class="p-3 rounded-4 border bg-white hover-soft">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold text-dark">#{{ r.id }} — {{ r.room.hotel.name }}</div>
+                      <div class="text-secondary small">{{ r.user.email }} • {{ r.total_price() }}</div>
+                    </div>
+                    <span class="badge text-bg-success">paid</span>
+                  </div>
+                  {% if r.paid_at %}
+                    <div class="text-secondary small mt-1">Paid at: {{ r.paid_at.strftime("%Y-%m-%d %H:%M") }}</div>
+                  {% endif %}
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-secondary">No payments yet.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-3">Latest sign-ups</h2>
+        {% if latest_users %}
+          <div class="vstack gap-2">
+            {% for u in latest_users %}
+              <div class="d-flex justify-content-between align-items-center p-2 rounded-3">
+                <div class="text-dark"><i class="bi bi-person me-2"></i>{{ u.email }}</div>
+                <div class="text-secondary small">{{ u.created_at.strftime("%Y-%m-%d") }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-secondary">No users yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

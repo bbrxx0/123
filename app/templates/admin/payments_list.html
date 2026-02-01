@@ -1,0 +1,83 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Payments — Admin{% endblock %}
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">Payments</h1>
+    <div class="text-secondary small">Stripe sessions and payment states</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm {% if not state %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.payments_list', q=qtext) }}">All</a>
+    <a class="btn btn-sm {% if state=='paid' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.payments_list', state='paid', q=qtext) }}">Paid</a>
+    <a class="btn btn-sm {% if state=='unpaid' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.payments_list', state='unpaid', q=qtext) }}">Unpaid</a>
+    <a class="btn btn-sm {% if state=='failed' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.payments_list', state='failed', q=qtext) }}">Failed</a>
+  </div>
+</div>
+
+<form class="mb-3" method="get" action="{{ url_for('admin.payments_list') }}">
+  <input type="hidden" name="state" value="{{ state }}">
+  <div class="input-group">
+    <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <input class="form-control" name="q" value="{{ qtext }}" placeholder="Search by email, hotel or city...">
+    <button class="btn btn-outline-dark" type="submit">Search</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.payments_list', state=state) }}">Clear</a>
+  </div>
+</form>
+
+<div class="alert alert-light border">
+  <b>Paid revenue (in this list):</b> {{ revenue_paid }}
+</div>
+
+{% if reservations %}
+  <div class="table-responsive">
+    <table class="table align-middle bg-white shadow-sm rounded-3 overflow-hidden">
+      <thead>
+        <tr>
+          <th>Booking</th>
+          <th>User</th>
+          <th>Hotel</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Stripe session</th>
+          <th>Paid at</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+          <tr>
+            <td class="text-secondary">#{{ r.id }}</td>
+            <td>{{ r.user.email }}</td>
+            <td>
+              <div class="fw-semibold">{{ r.room.hotel.name }}</div>
+              <div class="text-secondary small">{{ r.room.hotel.city }}</div>
+            </td>
+            <td><b>{{ r.total_price() }}</b></td>
+            <td>
+              <span class="badge 
+                {% if r.payment_status=='paid' %}text-bg-success
+                {% elif r.payment_status=='failed' %}text-bg-danger
+                {% else %}text-bg-secondary{% endif %}">
+                {{ r.payment_status }}
+              </span>
+            </td>
+            <td class="text-secondary small" style="max-width:220px; word-break:break-all;">
+              {{ r.stripe_session_id or "—" }}
+            </td>
+            <td class="text-secondary small">
+              {% if r.paid_at %}{{ r.paid_at.strftime("%Y-%m-%d %H:%M") }}{% else %}—{% endif %}
+            </td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.reservation_detail', res_id=r.id) }}"><i class="bi bi-eye me-1"></i>View</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-light border">No payments found.</div>
+{% endif %}
+
+{% endblock %}

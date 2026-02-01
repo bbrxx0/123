@@ -1,0 +1,92 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Bookings — Admin{% endblock %}
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-0">Bookings</h1>
+    <div class="text-secondary small">Search by user email, hotel name, or city</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm {% if not status %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.reservations_list', q=qtext) }}">All</a>
+    <a class="btn btn-sm {% if status=='pending' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.reservations_list', status='pending', q=qtext) }}">Pending</a>
+    <a class="btn btn-sm {% if status=='confirmed' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.reservations_list', status='confirmed', q=qtext) }}">Confirmed</a>
+    <a class="btn btn-sm {% if status=='canceled' %}btn-primary{% else %}btn-outline-primary{% endif %}" href="{{ url_for('admin.reservations_list', status='canceled', q=qtext) }}">Canceled</a>
+  </div>
+</div>
+
+<form class="mb-3" method="get" action="{{ url_for('admin.reservations_list') }}">
+  <input type="hidden" name="status" value="{{ status }}">
+  <div class="input-group">
+    <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <input class="form-control" name="q" value="{{ qtext }}" placeholder="Search...">
+    <button class="btn btn-outline-dark" type="submit">Search</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.reservations_list', status=status) }}">Clear</a>
+  </div>
+</form>
+
+{% if reservations %}
+  <div class="table-responsive">
+    <table class="table align-middle bg-white shadow-sm rounded-3 overflow-hidden">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Hotel / Room</th>
+          <th>Dates</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+          <tr>
+            <td class="text-secondary">#{{ r.id }}</td>
+            <td>{{ r.user.email }}</td>
+            <td>
+              <div class="fw-semibold">{{ r.room.hotel.name }}</div>
+              <div class="text-secondary small">{{ r.room.name }}</div>
+            </td>
+            <td class="text-secondary">{{ r.check_in }} → {{ r.check_out }} ({{ r.nights }} nights)</td>
+            <td><b>{{ r.total_price() }}</b></td>
+            <td>
+              <span class="badge 
+                {% if r.status=='confirmed' %}text-bg-success
+                {% elif r.status=='canceled' %}text-bg-light border text-dark
+                {% else %}text-bg-secondary{% endif %}">
+                {{ r.status }}
+              </span>
+            </td>
+            <td>
+              <span class="badge 
+                {% if r.payment_status=='paid' %}text-bg-success
+                {% elif r.payment_status=='failed' %}text-bg-danger
+                {% else %}text-bg-secondary{% endif %}">
+                {{ r.payment_status }}
+              </span>
+            </td>
+            <td class="text-end">
+              <div class="d-flex gap-2 justify-content-end">
+                <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.reservation_detail', res_id=r.id) }}"><i class="bi bi-eye me-1"></i>View</a>
+                <form class="d-flex gap-2" method="post" action="{{ url_for('admin.reservation_set_status', res_id=r.id) }}">
+                  <select class="form-select form-select-sm" name="status">
+                    <option value="pending" {% if r.status=='pending' %}selected{% endif %}>pending</option>
+                    <option value="confirmed" {% if r.status=='confirmed' %}selected{% endif %}>confirmed</option>
+                    <option value="canceled" {% if r.status=='canceled' %}selected{% endif %}>canceled</option>
+                  </select>
+                  <button class="btn btn-sm btn-outline-primary" type="submit">Save</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-light border">No bookings.</div>
+{% endif %}
+
+{% endblock %}

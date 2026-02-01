@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Password reset — StayFinder{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-xl-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-2">Reset password</h1>
+        <p class="text-secondary mb-3">Enter your email and we'll send you a reset link.</p>
+
+        <form method="post">
+          {{ form.csrf_token }}
+          <div class="mb-3">
+            <label class="form-label">{{ form.email.label.text }}</label>
+            {{ form.email(class="form-control", placeholder="you@example.com") }}
+            {% for e in form.email.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="d-grid">
+            <button class="btn btn-dark btn-lg">{{ form.submit.label.text }}</button>
+          </div>
+        </form>
+
+        {% if reset_url %}
+          <hr class="my-4">
+          <div class="alert alert-warning border mb-0">
+            <div class="fw-semibold mb-1">Dev mode</div>
+            <div class="small">Reset link (copy & open):</div>
+            <div class="small mt-2"><a href="{{ reset_url }}">{{ reset_url }}</a></div>
+          </div>
+        {% endif %}
+
+        <div class="text-secondary small mt-3">
+          <a href="{{ url_for('auth.login') }}">← Back to sign in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

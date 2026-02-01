@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}New password — StayFinder{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-xl-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-3">Choose a new password</h1>
+        <form method="post">
+          {{ form.csrf_token }}
+          <div class="mb-3">
+            <label class="form-label">{{ form.password.label.text }}</label>
+            {{ form.password(class="form-control") }}
+            {% for e in form.password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{{ form.confirm.label.text }}</label>
+            {{ form.confirm(class="form-control") }}
+            {% for e in form.confirm.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="d-grid">
+            <button class="btn btn-dark btn-lg">{{ form.submit.label.text }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
