@@ -1,0 +1,110 @@
+@startuml StayFinder Use Case Diagram
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Guest\n(Gość)" as Guest
+actor "Registered User\n(Zarejestrowany użytkownik)" as User
+actor "Administrator\n(Administrator)" as Admin
+actor "Stripe Payment System\n(System płatności Stripe)" as Stripe
+
+rectangle "StayFinder Hotel Booking System" {
+  
+  package "Public Features\n(Funkcje publiczne)" {
+    usecase "Browse Hotels\n(Przeglądaj hotele)" as UC1
+    usecase "Search Hotels\n(Szukaj hoteli)" as UC2
+    usecase "View Hotel Details\n(Zobacz szczegóły hotelu)" as UC3
+    usecase "View Room Information\n(Zobacz informacje o pokoju)" as UC4
+  }
+  
+  package "Authentication\n(Uwierzytelnianie)" {
+    usecase "Register Account\n(Zarejestruj konto)" as UC5
+    usecase "Login\n(Zaloguj się)" as UC6
+    usecase "Confirm Email\n(Potwierdź email)" as UC7
+    usecase "Reset Password\n(Zresetuj hasło)" as UC8
+    usecase "Logout\n(Wyloguj się)" as UC9
+  }
+  
+  package "Booking Management\n(Zarządzanie rezerwacjami)" {
+    usecase "Create Booking\n(Utwórz rezerwację)" as UC10
+    usecase "View My Reservations\n(Zobacz moje rezerwacje)" as UC11
+    usecase "Cancel Reservation\n(Anuluj rezerwację)" as UC12
+    usecase "Check Room Availability\n(Sprawdź dostępność pokoju)" as UC13
+  }
+  
+  package "Payment Processing\n(Przetwarzanie płatności)" {
+    usecase "Initiate Payment\n(Rozpocznij płatność)" as UC14
+    usecase "Process Payment\n(Przetwórz płatność)" as UC15
+    usecase "Confirm Payment\n(Potwierdź płatność)" as UC16
+    usecase "Send Payment Receipt\n(Wyślij potwierdzenie płatności)" as UC17
+  }
+  
+  package "Admin Panel\n(Panel administracyjny)" {
+    usecase "Admin Login\n(Logowanie administratora)" as UC18
+    usecase "View Dashboard\n(Zobacz panel główny)" as UC19
+    usecase "Manage Hotels\n(Zarządzaj hotelami)" as UC20
+    usecase "Manage Rooms\n(Zarządzaj pokojami)" as UC21
+    usecase "Manage Reservations\n(Zarządzaj rezerwacjami)" as UC22
+    usecase "View Payments\n(Zobacz płatności)" as UC23
+    usecase "View Users\n(Zobacz użytkowników)" as UC24
+    usecase "Update Reservation Status\n(Aktualizuj status rezerwacji)" as UC25
+  }
+}
+
+' Guest relationships
+Guest --> UC1
+Guest --> UC2
+Guest --> UC3
+Guest --> UC4
+Guest --> UC5
+
+' Registered User inherits Guest capabilities
+User --|> Guest
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+User --> UC10
+User --> UC11
+User --> UC12
+User --> UC14
+
+' Administrator relationships
+Admin --> UC18
+Admin --> UC19
+Admin --> UC20
+Admin --> UC21
+Admin --> UC22
+Admin --> UC23
+Admin --> UC24
+Admin --> UC25
+
+' Stripe System relationships
+Stripe --> UC15
+Stripe --> UC16
+
+' Include relationships
+UC10 ..> UC13 : <<include>>
+UC14 ..> UC15 : <<include>>
+UC16 ..> UC17 : <<include>>
+UC20 ..> UC21 : <<include>>
+
+' Extend relationships
+UC5 ..> UC7 : <<extend>>
+UC16 ..> UC25 : <<extend>>
+
+note right of Guest
+  Gość może przeglądać hotele
+  i rejestrować się w systemie
+end note
+
+note right of User
+  Zarejestrowany użytkownik może
+  dokonywać rezerwacji i płatności
+end note
+
+note right of Admin
+  Administrator zarządza całym
+  systemem, hotelami i rezerwacjami
+end note
+
+@enduml
